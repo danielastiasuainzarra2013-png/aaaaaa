@@ -94,7 +94,7 @@ else:
             st.rerun()
 
     # Admin
-    if st.session_state.username == "daniel":
+    if st.session_state.username == "Dani2008":
         with st.expander("🛠️ Admin"):
             t = st.text_input("Usuario a activar")
             if st.button("✅ Activar Premium"):
