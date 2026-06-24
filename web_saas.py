@@ -93,16 +93,28 @@ else:
             conn.commit()
             st.rerun()
 
-    # Admin
+   # Admin - Protegido por usuario y contraseña
     if st.session_state.username == "Dani2008":
-        with st.expander("🛠️ Admin"):
-            t = st.text_input("Usuario a activar")
-            if st.button("✅ Activar Premium"):
-                conn.execute("UPDATE usuarios SET es_premium=1 WHERE username=?", (t,))
-                conn.commit()
-                st.rerun()
-            if st.button("💥 RESET DB"):
-                conn.execute("DELETE FROM usuarios")
-                conn.execute("DELETE FROM servicios")
-                conn.commit()
-                st.rerun()
+        # Verificamos la contraseña directamente de la base de datos
+        conn = get_db()
+        user_data = conn.execute("SELECT password FROM usuarios WHERE username = ?", ("Dani2008",)).fetchone()
+        conn.close()
+        
+        if user_data and user_data[0] == "200812":
+            with st.expander("🛠️ Panel de Administrador"):
+                t = st.text_input("Usuario a activar")
+                if st.button("✅ Activar Premium"):
+                    conn = get_db()
+                    conn.execute("UPDATE usuarios SET es_premium=1 WHERE username=?", (t,))
+                    conn.commit()
+                    conn.close()
+                    st.rerun()
+                if st.button("💥 RESET DB"):
+                    conn = get_db()
+                    conn.execute("DELETE FROM usuarios")
+                    conn.execute("DELETE FROM servicios")
+                    conn.commit()
+                    conn.close()
+                    st.rerun()
+        else:
+            st.warning("El administrador no tiene la contraseña configurada correctamente.")
